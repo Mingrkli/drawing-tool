@@ -7,6 +7,8 @@ let currentSize = document.getElementById('sizePicker');
 let clearBtn = document.getElementById('clearBtn');
 
 let drawing = false;
+let startX;
+let startY;
 
 // Window Resize
 window.addEventListener('resize', () => {
@@ -21,39 +23,33 @@ currentSize.addEventListener('input', () => {
     }
 })
 
-const mouse = {
-    x: undefined,
-    y: undefined,
+const draw = (e) => {
+    if(!drawing) {
+        return;
+    } 
+
+    ctx.strokeStyle = currentColor.value;
+
+    ctx.lineWidth = currentSize.value;
+    ctx.lineCap = 'round';
+
+    ctx.lineTo(e.x, e.y)
+    ctx.stroke();
 }
 
-canvas.addEventListener('click', (e) => {
-    mouse.x = e.x;
-    mouse.y = e.y;
-    drawCircle();
-})
-
-canvas.addEventListener('mousedown', () => {
+canvas.addEventListener('mousedown', (e) => {
     drawing = true;
+    startX = e.x
+    startY = e.y
 })
 
-canvas.addEventListener('mousemove', (e) => {
-    if (drawing === true) {
-        mouse.x = e.x;
-        mouse.y = e.y;
-        drawCircle()
-    }
-})
-
-canvas.addEventListener('mouseup', () => {
+canvas.addEventListener('mouseup', (e) => {
     drawing = false;
+    ctx.stroke();
+    ctx.beginPath();
 })
 
-function drawCircle() {
-    ctx.fillStyle = currentColor.value;
-    ctx.beginPath();
-    ctx.arc(mouse.x, mouse.y, currentSize.value, 0, Math.PI * 2);
-    ctx.fill();
-}
+canvas.addEventListener('mousemove', draw);
 
 clearBtn.addEventListener('click', (e) => {
     e.preventDefault();
